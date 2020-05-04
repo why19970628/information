@@ -123,7 +123,7 @@ def news_comment():
     if parent_id:
         comment.parent_id = parent_id
 
-    # 6.保存平路对象到数据库中
+    # 6.保存评论对象到数据库中
     try:
         db.session.add(comment)
         db.session.commit()
