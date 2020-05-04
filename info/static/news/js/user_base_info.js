@@ -28,7 +28,7 @@ $(function () {
             "nick_name": nick_name,
             "gender": gender
         }
-        /*
+
         $.ajax({
             url: "/user/base_info",
             type: "post",
@@ -48,6 +48,6 @@ $(function () {
                 }
             }
         })
-        */
+
     })
 })

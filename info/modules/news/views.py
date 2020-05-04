@@ -62,6 +62,7 @@ def comment_like():
                 db.session.add(comment_like)
 
                 # 将该评论的点赞数量 +1
+                comment.like_count += 1
                 db.session.commit()
         else:
             # 6.2 判断用户是否有对该评论点过赞

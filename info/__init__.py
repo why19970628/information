@@ -58,6 +58,10 @@ def create_app(config_name):
     from info.modules.news import news_bp
     app.register_blueprint(news_bp)
 
+    # 将用户蓝图profile_bp, 注册到app中
+    from info.modules.profile import profile_bp
+    app.register_blueprint(profile_bp)
+
     # 使用请求钩子拦截所有请求, 在返回的响应cookie设置csrf_token
     @app.after_request
     def after_request(resp):
