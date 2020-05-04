@@ -1,0 +1,6 @@
+.idea/
+.py[cod]
+logs/log*
+__pycache__/
+migrations/
+venv/
