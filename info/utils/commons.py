@@ -4,6 +4,7 @@ from functools import wraps
 
 # 定义登录装饰器，封装用户的登录数据
 def user_login_data(view_func):
+    # 加上不会修改被装饰的函数
     @wraps(view_func)
     def wrapper(*args, **kwargs):
         # 1.通过session获取用户的登录信息
