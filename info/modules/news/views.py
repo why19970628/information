@@ -10,6 +10,56 @@ from info.utils.commons import user_login_data
 from info.utils.response_code import RET
 
 
+# 关注与取消关注
+# 请求路径: /news/followed_user
+# 请求方式: POST
+# 请求参数:user_id,action
+# 返回值: errno, errmsg
+@news_bp.route('/followed_user', methods=['POST'])
+@user_login_data
+def followed_user():
+    # 1.判断用户是否登录
+    if not g.user:
+        return jsonify(errno=RET.NODATA, errmsg='用户未登录')
+
+    # 2.获取参数
+    author_id = request.json.get('user_id')
+    action = request.json.get('action')
+
+    # 3.校验参数，为空校验
+    if not all([author_id, action]):
+        return jsonify(errno=RET.PARAMERR, errmsg='参数不全')
+
+    # 4.检验操作类型
+    if not action in ['follow', 'unfollow']:
+        return jsonify(errno=RET.DATAERR, errmsg='操作类型有误')
+
+    # 5.根据作者编号取出作者对象，判断作者对象是否存在
+    try:
+        author = User.query.get(author_id)
+    except Exception as e:
+        current_app.logger.error(e)
+        return jsonify(errno=RET.DBERR, errmsg='获取作者失败')
+
+    if not author:
+        return jsonify(errno=RET.NODATA, errmsg='该作者不存在')
+
+    # 6.根据操作类型，进行关注或者取消
+    if action == 'follow':
+        # 关注
+        # 6.1判断当前用户是否关注了该作者
+        if not g.user in author.followers:
+            author.followers.append(g.user)
+    else:
+        # 取消关注
+        # 6.2 判断当前用户是否关注了该作者
+        if g.user in author.followers:
+            author.followers.remove(g.user)
+
+    # 7.返回响应
+    return jsonify(errno=RET.OK, errmsg='操作成功')
+
+
 # 评论点赞
 # 请求路径: /news/comment_like
 # 请求方式: POST
@@ -259,11 +309,17 @@ def news_detail(news_id):
         if g.user and comment.id in mylike_comment_ids:
             comm_dict['is_like'] = True
 
+    # 8.判断登录的用户是否关注了新闻作者
+    is_followed = False
+    if g.user and news.user:
+        if g.user in news.user.followers:
+            is_followed = True
     data = {
         "news_info": news.to_dict(),
         "user_info": g.user.to_dict() if g.user else "",
         "news_list": click_news_list,
         "is_collected": is_collected,
-        "comments": comments_list
+        "comments": comments_list,
+        "is_followed": is_followed
     }
     return render_template('news/detail.html', data=data)
