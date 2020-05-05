@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, redirect
 from redis import StrictRedis
 import logging
 from logging.handlers import RotatingFileHandler
@@ -62,7 +62,15 @@ def create_app(config_name):
     from info.modules.profile import profile_bp
     app.register_blueprint(profile_bp)
 
-    # 使用请求钩子拦截所有请求, 在返回的响应cookie设置csrf_token
+    # 将管理员蓝图admin_bp，注册到app中
+    from info.modules.admin import admin_bp
+    app.register_blueprint(admin_bp)
+
+    # 使用errorhandler统一处理404错误状态码异常
+    @app.errorhandler(404)
+    def page_not_found(e):
+        return redirect('/404')    # 使用请求钩子拦截所有请求, 在返回的响应cookie设置csrf_token
+
     @app.after_request
     def after_request(resp):
         # 调用系统方法，获取csrf_token
