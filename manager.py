@@ -5,9 +5,10 @@ from flask import current_app
 # 导入models的作用是让整个应用程序知道有models的存在
 from info import create_app, db, models
 from info.models import User
+import os
 
-
-app = create_app('develop')
+env = os.getenv("APP_ENV","develop").lower()
+app = create_app(env)
 
 # 创建manager对象, 管理app
 manager = Manager(app)
