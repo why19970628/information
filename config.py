@@ -16,11 +16,6 @@ class Config(object):
     # 默认日志级别
     LEVEL_NAME = logging.DEBUG
 
-    # 数据库配置信息
-    SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:123456@localhost:3306/information'
-    SQLALCHEMY_TRACK_MODIFICATIONS = False
-    SQLALCHEMY_COMMIT_ON_TEARDOWN = True # 每当改变数据内容之后，在视图函数结束的时候会自动提交
-
     # session配置
     SESSION_TYPE = 'redis' # 设置redis存储的类型
     SESSION_REDIS = StrictRedis(host=REDIS_HOST, port=REDIS_PORT) # 指定session存储的redis服务器
@@ -29,11 +24,19 @@ class Config(object):
 
 # 开发环境配置信息
 class DevelopConfig(Config):
-    pass
+    # 数据库配置信息
+    SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:123456@localhost:3306/information'
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
+    SQLALCHEMY_COMMIT_ON_TEARDOWN = True # 每当改变数据内容之后，在视图函数结束的时候会自动提交
 
 
 # 生产(线上)环境配置信息
 class ProductConfig(Config):
+    # 数据库配置信息
+    SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:root@localhost:3306/information'
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
+    SQLALCHEMY_COMMIT_ON_TEARDOWN = True # 每当改变数据内容之后，在视图函数结束的时候会自动提交
+
     DEBUG = False
 
     LEVEL_NAME = logging.ERROR
