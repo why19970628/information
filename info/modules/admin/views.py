@@ -20,6 +20,7 @@ from info import constants
 # 返回值:渲染页面user_count.html,字典数据
 @admin_bp.route('/user_count')
 def user_count():
+
     # 1.获取用户总数
     try:
         total_count = User.query.filter(User.is_admin == False).count()
@@ -488,8 +489,22 @@ def admin_login():
 @admin_bp.route('/index')
 @user_login_data
 def admin_index():
-
     data = {
         'user_info': g.user.to_dict() if g.user else ""
     }
     return render_template('admin/index.html', data=data)
+
+
+# 退出登陆
+# 请求路径: /admin/logout
+# 请求方式: POST
+# 请求参数: 无
+# 返回值: errno, errmsg
+@admin_bp.route('/logout', methods=['POST'])
+def logout():
+    # 1.清除session信息
+    session.pop('user_id', None)
+    session.pop('is_admin', None)
+
+    # 2.返回响应
+    return jsonify(errno=RET.OK, errmsg='退出成功')

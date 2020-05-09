@@ -1,26 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 	<meta charset="UTF-8">
 	<title>新经资讯后台管理</title>
 	<link rel="stylesheet" type="text/css" href="../../static/admin/css/reset.css">
 	<link rel="stylesheet" type="text/css" href="../../static/admin/css/main.css">
 	<script type="text/javascript" src="../../static/admin/js/jquery-1.12.4.min.js"></script>
-    <script type="text/javascript" src="../../static/admin/js/index.js"></script>
+	<script type="text/javascript" src="../../static/admin/js/index.js"></script>
 </head>
+
 <body>
 	<div class="header">
 		<a href="#" class="logo fl"><img src="../../static/admin/images/logo.png" alt="logo"></a>
 		<a href="#" class="logout fr">退 出</a>
+		<!-- onclick="logout()" -->
 	</div>
-	
+
 	<div class="side_bar">
 		<div class="user_info">
-            {% if data.user_info.avatar_url %}
-                <img src="{{ data.user_info.avatar_url }}" alt="张大山">
-            {% else %}
-                <img src="../../static/admin/images/person.png" alt="张大山">
-            {% endif %}
+			{% if data.user_info.avatar_url %}
+			<img src="{{ data.user_info.avatar_url }}" alt="张大山">
+			{% else %}
+			<img src="../../static/admin/images/person.png" alt="张大山">
+			{% endif %}
 
 			<p>欢迎你 <em>{{ data.user_info.nick_name }}</em></p>
 		</div>
@@ -41,21 +44,40 @@
 	</div>
 
 	<div class="main_body" id="main_body">
-        {# 默认展示的用户图表页面 #}
-		<iframe src="/admin/user_count" frameborder="0" id="main_frame" name="main_frame" frameborder="0" scrolling="auto"></iframe>
+		{# 默认展示的用户图表页面 #}
+		<iframe src="/admin/user_count" frameborder="0" id="main_frame" name="main_frame" frameborder="0"
+			scrolling="auto"></iframe>
 	</div>
-	
+
 	<script>
-		$(function(){
-			$('.first_menu').click(function(){
+		$(function () {
+			$('.first_menu').click(function () {
 				$(this).addClass('active').siblings('.first_menu').removeClass('active');
 				$(this).next().slideDown().siblings('.sub_menu').slideUp();
 			})
 			var frame_w = $('#main_body').outerWidth();
 			var frame_h = $('#main_body').outerHeight();
-			$('#main_frame').css({'width':frame_w,'height':frame_h});
+			$('#main_frame').css({ 'width': frame_w, 'height': frame_h });
+		})
+
+		//退出登陆
+		$(function () {
+			$('.logout fr').click(function () {
+				$.ajax({
+					url: '/admin/logout',
+					type: 'post',
+					headers: { 'X-CSRFToken': getCookie('csrf_token') },
+					success: function (resp) {
+						window.location.reload()
+					}
+				})
+
+			})
 		})
 	</script>
 
+
+
 </body>
+
 </html>
